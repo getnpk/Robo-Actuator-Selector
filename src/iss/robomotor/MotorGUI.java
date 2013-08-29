@@ -7,6 +7,9 @@ package iss.robomotor;
 
 import iss.motords.Node;
 import iss.motords.RootNode;
+import iss.robomotor.Display;
+import java.awt.Font;
+import java.util.HashMap;
 import javax.swing.JOptionPane;
 
 /**
@@ -23,6 +26,9 @@ public class MotorGUI extends javax.swing.JFrame {
         initComponents(pointer);
     }
 
+    public HashMap<String, String> getMap(){
+        return this.map;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -35,6 +41,7 @@ public class MotorGUI extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         
         questionField = new javax.swing.JTextField(pointer.getQuestion());
+        questionField.setFont(new Font("Serif",Font.BOLD, 16));
         questionField.setEditable(false);
         
         jPanel2 = new javax.swing.JPanel();
@@ -45,6 +52,7 @@ public class MotorGUI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setTitle("Robo Actuator Suggestor");
+        
         
         questionField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -114,13 +122,16 @@ public class MotorGUI extends javax.swing.JFrame {
                 .addGap(23, 23, 23))
         );
 
+        
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
+        
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
+        
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -140,6 +151,7 @@ public class MotorGUI extends javax.swing.JFrame {
             pointer = pointer.getBack();
             System.out.println(pointer.getQuestion());
             questionField.setText(pointer.getQuestion());
+            setMapValues(pointer, -1);
         } else{
             JOptionPane.showMessageDialog(null, "You are at the beginning!", "Alert", JOptionPane.INFORMATION_MESSAGE);
         }
@@ -150,8 +162,14 @@ public class MotorGUI extends javax.swing.JFrame {
             pointer = pointer.getNo();
             System.out.println(pointer.getQuestion());
             questionField.setText(pointer.getQuestion());
+            setMapValues(pointer, 0);
         }else{
-            JOptionPane.showMessageDialog(null, "Thank you!", "Done", JOptionPane.INFORMATION_MESSAGE);
+            System.out.println(this.map.toString());
+            
+            HashMap<String,String> nmap = this.getMap();
+            Display display = new iss.robomotor.Display(nmap);
+            
+            //JOptionPane.showMessageDialog(null, "Thank you!", "Done", JOptionPane.INFORMATION_MESSAGE);
         }
     }
     
@@ -160,8 +178,14 @@ public class MotorGUI extends javax.swing.JFrame {
             pointer = pointer.getYes();
             System.out.println(pointer.getQuestion());
             questionField.setText(pointer.getQuestion());
+            setMapValues(pointer, 1);
         }else{
-            JOptionPane.showMessageDialog(null, "Thank you!", "Done", JOptionPane.INFORMATION_MESSAGE);
+            System.out.println(this.map.toString());
+            
+            HashMap<String,String> nmap = this.getMap();
+            Display display = new iss.robomotor.Display(nmap);
+            
+            ///JOptionPane.showMessageDialog(null, "Thank you!", "Done", JOptionPane.INFORMATION_MESSAGE);
         }
     }                                         
 
@@ -169,14 +193,62 @@ public class MotorGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }                                             
 
+    public void setMapValues(Node node, int status){
+        
+        int nodeid = node.getId();
+        
+        switch(nodeid){
+            case 101:
+                map.put("MOTOR_TYPE", "AC motor!");
+                break;
+            case 102:
+                map.put("MOTOR_TYPE", "PMDC motor!");
+                break;
+            case 103:
+                 map.put("MOTOR_TYPE", "BLDC motor!");
+                break;
+            
+            case 201:
+                if (status == 1)
+                        map.put("MOTOR_LOAD", "HIGH");
+                else
+                        map.put("MOTOR_LOAD", "LOW");
+                break;
+            case 202:
+                if (status == 1)
+                        map.put("MOTOR_LIFE", "HIGH");
+                else
+                        map.put("MOTOR_LIFE", "LOW");
+                break;
+                
+            case 203:
+                if (status == 1)
+                        map.put("MOTOR_TEMP", "HIGH");
+                else
+                        map.put("MOTOR_TEMP", "LOW");
+                break;
+            case 204:
+                if (status == 1)
+                        map.put("MOTOR_NOISE", "HIGH");
+                else
+                        map.put("MOTOR_NOISE", "LOW");
+                break;
+                
+        }
+                
+        
+    }
     
     // Variables declaration - do not modify                     
     private javax.swing.JButton backButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    
     private javax.swing.JButton noButton;
     private javax.swing.JTextField questionField;
     private javax.swing.JButton yesButton;
 
     private Node pointer;
+    private HashMap<String, String> map = new HashMap<String,String>();
+    
 }
